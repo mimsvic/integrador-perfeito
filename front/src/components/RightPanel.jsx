@@ -1,10 +1,8 @@
 'use client';
 
-import { motion, useMotionValue, useTransform } from 'framer-motion';
+import {useMotionValue, useTransform } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
-
-import group76 from "../assets/group76.svg";
 import somIcon from "../assets/som.svg";
 import shapeIcon from "../assets/Shape.svg";
 import routerIcon from "../assets/router.svg";
@@ -115,10 +113,7 @@ export default function CreditCard02() {
             </div>
           </div>
         </div>
-
-        {/* Cards de controle */}
         <div className="flex flex-wrap gap-4 mt-8 justify-start">
-          {/* Música */}
           <div
             className="w-[230px] sm:w-[250px] rounded-xl border border-gray-200 bg-[#EC5A55] p-3 flex flex-col justify-between cursor-pointer"
             onClick={() => toggleSwitch("somOn")}
@@ -136,8 +131,6 @@ export default function CreditCard02() {
             </div>
             <span className="font-medium text-sm text-white">Music</span>
           </div>
-
-          {/* Temperatura */}
           <div
             className="w-[230px] sm:w-[250px] rounded-xl p-3 text-white flex flex-col justify-between cursor-pointer"
             style={{
@@ -156,8 +149,6 @@ export default function CreditCard02() {
             </div>
             <span className="font-medium text-sm">Temperatura</span>
           </div>
-
-          {/* Roteador */}
           <div
             className="w-[230px] sm:w-[250px] rounded-xl border border-gray-200 bg-[#3ACBE9] p-3 flex flex-col justify-between cursor-pointer"
             onClick={() => toggleSwitch("routerOn")}
@@ -177,8 +168,6 @@ export default function CreditCard02() {
               Router
             </span>
           </div>
-
-          {/* Luzes */}
           <div
             className={`w-[230px] sm:w-[250px] rounded-xl border border-gray-200 p-3 flex flex-col justify-between cursor-pointer ${
               lightsOn ? "bg-[#8C5EEE]" : "bg-white"
@@ -199,7 +188,6 @@ export default function CreditCard02() {
                 alt="Luzes"
                 className={`w-7 h-5 ${lightsOn ? "brightness-0 invert" : "brightness-75"}`}
 />
-
             </div>
             <span className={`font-medium text-sm ${lightsOn ? "text-white" : "text-gray-400"}`}>
               Luzes

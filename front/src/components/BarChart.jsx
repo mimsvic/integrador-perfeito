@@ -1,4 +1,4 @@
-// BarChart.jsx
+
 import {
   Card,
   CardBody,

@@ -16,7 +16,6 @@ from django.http import JsonResponse
 import pandas as pd  
 from django.utils import timezone
 
-# ======================= Ambientes =======================
 
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
@@ -51,8 +50,6 @@ class AmbientesSearchView(ListAPIView):
     search_fields = ['id', 'sig', 'descricao', 'ni', 'responsavel']
 
 
-# ======================= Sensores =======================
-
 @api_view(['GET', 'POST'])
 @permission_classes([IsAuthenticated])
 def listar_sensores(request):
@@ -86,7 +83,7 @@ class SensoresSearchView(ListAPIView):
     search_fields = ['id', 'sensor', 'mac_address', 'unidade_med', 'latitude', 'longitude', 'status']
 
 
-# ======================= Historico =======================
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def historico_ultimas_24h(request):
@@ -139,8 +136,6 @@ class HistoricoSearchView(ListAPIView):
         'valor'
     ]
 
-
-# ======================= Usuario =======================
 
 @api_view(['POST'])
 def cadastrar_usuario(request):

@@ -1,4 +1,4 @@
-// Thermostat.jsx
+
 import React, { useState } from 'react';
 import thermometer from '../assets/mode.svg';
 import snowflake from '../assets/mode (2).svg';

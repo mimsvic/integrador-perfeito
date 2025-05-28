@@ -56,8 +56,8 @@ export default function MainContent() {
     roomStates[currentRoom];
 
   return (
-    <div className="flex-1 px-6 py-4 font-poppins bg-white">
-      <div className="w-full max-w-[800px]">
+    <div className="flex-1 px-2 py-3 sm:px-6 sm:py-4 font-poppins bg-white">
+      <div className="w-full max-w-[800px] mx-auto">
         <div className="relative w-full h-auto">
           <img
             src={group76}
@@ -66,70 +66,64 @@ export default function MainContent() {
           />
         </div>
 
-        <div className="mt-2 flex justify-start">
-          <div className="flex items-center text-gray-700 text-sm space-x-4 pt-5">
-            <div className="flex items-center space-x-1">
-              <Droplet className="w-5 h-5" />
-              <span>35%</span>
+        <div className="mt-2 flex flex-wrap gap-2 items-center text-gray-700 text-xs sm:text-sm pt-4">
+          <div className="flex items-center space-x-1">
+            <Droplet className="w-5 h-5" />
+            <span>35%</span>
+          </div>
+          <div className="flex items-center space-x-1">
+            <Thermometer className="w-5 h-5" />
+            <span>15°C</span>
+          </div>
+          <div className="relative">
+            <div
+              className="flex items-center px-3 py-1.5 bg-gray-100 rounded-md text-gray-700 cursor-pointer"
+              onClick={() => setShowSettings(!showSettings)}
+            >
+              {currentRoom}
+              <ChevronDown className="w-5 h-5 ml-1" />
             </div>
-            <div className="flex items-center space-x-1">
-              <Thermometer className="w-5 h-5" />
-              <span>15°C</span>
-            </div>
-
-            <div className="relative">
-              <div
-                className="flex items-center px-3 py-2 bg-gray-100 rounded-md text-gray-700 cursor-pointer"
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                {currentRoom}
-                <ChevronDown className="w-5 h-5 ml-1" />
+            {showSettings && (
+              <div className="absolute right-0 mt-2 w-36 sm:w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
+                <ul className="py-2 text-xs sm:text-sm text-gray-700">
+                  <li
+                    onClick={() => handleRoomChange("Quarto")}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Sala Admin
+                  </li>
+                  <li
+                    onClick={() => handleRoomChange("Cozinha")}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Lab1
+                  </li>
+                  <li
+                    onClick={() => handleRoomChange("Sala")}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Lab2
+                  </li>
+                  <li
+                    onClick={() => handleRoomChange("Living Room")}
+                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Lab3
+                  </li>
+                </ul>
               </div>
-
-              {showSettings && (
-                <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg z-10">
-                  <ul className="py-2 text-sm text-gray-700">
-                    <li
-                      onClick={() => handleRoomChange("Quarto")}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      Sala Admin
-                    </li>
-                    <li
-                      onClick={() => handleRoomChange("Cozinha")}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      Lab1
-                    </li>
-                    <li
-                      onClick={() => handleRoomChange("Sala")}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      Lab2
-                    </li>
-                    <li
-                      onClick={() => handleRoomChange("Living Room")}
-                      className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                    >
-                      Lab3
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
-        <h2 className="text-2xl font-semibold text-gray-800 mt-4">Senai City</h2>
-
-        {/* Cards pequenos */}
-        <div className="flex flex-wrap gap-4 mt-8 justify-start">
-          {/* Refrigerador */}
+        <h2 className="text-lg sm:text-2xl font-semibold text-gray-800 mt-4">Senai City</h2>
+        <div className="flex flex-wrap gap-3 sm:gap-4 mt-6 sm:mt-8 justify-start">
+          {/* CARD - Refrigerador */}
           <div
-            className="w-[130px] sm:w-[150px] rounded-xl border border-gray-200 bg-white p-3 flex flex-col justify-between cursor-pointer"
+            className="w-[48%] min-w-[120px] sm:w-[150px] rounded-xl border border-gray-200 bg-white p-3 flex flex-col justify-between cursor-pointer"
             onClick={() => toggleSwitch("refrigeratorOn")}
           >
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-2">
               <span className="text-[12px] font-semibold text-gray-700">
                 {refrigeratorOn ? "ON" : "OFF"}
               </span>
@@ -148,16 +142,15 @@ export default function MainContent() {
             <div className="mb-2">
               <img src={refrigeradorIcon} alt="Refrigerator" className="w-7" />
             </div>
-            <span className="font-medium text-sm text-gray-900">Refrigerator</span>
+            <span className="font-medium text-xs sm:text-sm text-gray-900">Refrigerator</span>
           </div>
-
-          {/* Temperatura */}
+          {/* CARD - Temperature */}
           <div
-            className="w-[130px] sm:w-[150px] rounded-xl p-3 text-white flex flex-col justify-between cursor-pointer"
+            className="w-[48%] min-w-[120px] sm:w-[150px] rounded-xl p-3 text-white flex flex-col justify-between cursor-pointer"
             style={{ backgroundColor: temperatureOn ? "#0075E3" : "#d1d5db" }}
             onClick={() => toggleSwitch("temperatureOn")}
           >
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-2">
               <span className="text-[12px] font-semibold">
                 {temperatureOn ? "ON" : "OFF"}
               </span>
@@ -175,15 +168,14 @@ export default function MainContent() {
             <div className="mb-2">
               <img src={shapeIcon} alt="Temperature" className="w-7 h-5" />
             </div>
-            <span className="font-medium text-sm">Temperature</span>
+            <span className="font-medium text-xs sm:text-sm">Temperature</span>
           </div>
-
-          {/* Ar condicionado */}
+          {/* CARD - Ar */}
           <div
-            className="w-[130px] sm:w-[150px] rounded-xl border border-gray-200 bg-white p-3 flex flex-col justify-between cursor-pointer"
+            className="w-[48%] min-w-[120px] sm:w-[150px] rounded-xl border border-gray-200 bg-white p-3 flex flex-col justify-between cursor-pointer"
             onClick={() => toggleSwitch("airConditionerOn")}
           >
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-2">
               <span
                 className={`text-[12px] font-semibold ${
                   airConditionerOn ? "text-gray-700" : "text-gray-400"
@@ -207,20 +199,19 @@ export default function MainContent() {
               <img src={arIcon} alt="Air Conditioner" className="w-7 h-5" />
             </div>
             <span
-              className={`font-medium text-sm ${
+              className={`font-medium text-xs sm:text-sm ${
                 airConditionerOn ? "text-gray-900" : "text-gray-400"
               }`}
             >
               Air Conditioner
             </span>
           </div>
-
-          {/* Luzes */}
+          {/* CARD - Luz */}
           <div
-            className="w-[130px] sm:w-[150px] rounded-xl border border-gray-200 bg-white p-3 flex flex-col justify-between cursor-pointer"
+            className="w-[48%] min-w-[120px] sm:w-[150px] rounded-xl border border-gray-200 bg-white p-3 flex flex-col justify-between cursor-pointer"
             onClick={() => toggleSwitch("lightsOn")}
           >
-            <div className="flex justify-between items-center mb-3">
+            <div className="flex justify-between items-center mb-2">
               <span
                 className={`text-[12px] font-semibold ${
                   lightsOn ? "text-gray-700" : "text-gray-400"
@@ -244,7 +235,7 @@ export default function MainContent() {
               <img src={lampadaIcon} alt="Lights" className="w-7 h-5" />
             </div>
             <span
-              className={`font-medium text-sm ${
+              className={`font-medium text-xs sm:text-sm ${
                 lightsOn ? "text-gray-900" : "text-gray-400"
               }`}
             >
@@ -253,15 +244,14 @@ export default function MainContent() {
           </div>
         </div>
 
-        {/* Card grande abaixo */}
-        <div className="mt-8 w-full max-w-full bg-white rounded-xl p-6 shadow-md">
-          <h3 className="text-lg font-semibold text-gray-800 mb-2">
+        <div className="mt-6 sm:mt-8 w-full max-w-full bg-white rounded-xl p-4 sm:p-6 shadow-md">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2">
             Informações do cômodo: {currentRoom}
           </h3>
-          <p className="text-sm text-gray-700">
+          <p className="text-xs sm:text-sm text-gray-700">
             Aqui você pode monitorar os dispositivos ligados e o clima do ambiente.
           </p>
-          <ul className="mt-4 text-sm text-gray-600 space-y-1">
+          <ul className="mt-4 text-xs sm:text-sm text-gray-600 space-y-1">
             <li>
               Refrigerador:{" "}
               <span className="font-semibold">

@@ -41,21 +41,21 @@ export default function Header() {
         />
       </div>
 
-      {/* Right section */}
+
       <div className="flex items-center space-x-6">
-        {/* Settings Icon */}
+
         <Settings
           onClick={toggleSettingsModal}
           className="w-6 h-6 text-gray-700 cursor-pointer transition-transform duration-500 transform hover:rotate-180 hover:text-blue-500"
         />
 
-        {/* Notification Icon */}
+
         <Bell
           onClick={toggleNotificationModal}
           className="w-6 h-6 text-gray-700 cursor-pointer transition-transform duration-300 transform hover:scale-125 hover:text-yellow-500"
         />
 
-        {/* Notificações Mini Modal */}
+   
         {isNotificationModalOpen && (
           <div className="absolute top-16 right-6 w-64 bg-white shadow-lg rounded-lg p-4 animate-fadeIn">
             <div className="text-lg font-semibold">Notificações</div>
@@ -63,7 +63,7 @@ export default function Header() {
           </div>
         )}
 
-        {/* Configurações Mini Modal */}
+
         {isSettingsModalOpen && (
           <div className="absolute top-16 right-6 w-64 bg-white shadow-lg rounded-lg p-4 animate-fadeIn">
             <div className="text-lg font-semibold">Configurações</div>
@@ -76,7 +76,7 @@ export default function Header() {
           </div>
         )}
 
-        {/* Avatar e Nome do Usuário */}
+
         <div
           onClick={handleProfileClick}
           className="flex items-center space-x-2 cursor-pointer hover:opacity-80 transition"

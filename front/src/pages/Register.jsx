@@ -1,9 +1,4 @@
 import React, { useState } from 'react';
-
-// ATENÇÃO: para Poppins funcionar, adicione no public/index.html:
-// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-// Certifique-se de ter Tailwind CSS configurado no projeto!
-
 const Register = ({ onRegister }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -50,7 +45,7 @@ const Register = ({ onRegister }) => {
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl flex flex-col md:flex-row overflow-hidden">
-        {/* Ilustração à esquerda */}
+
         <div className="hidden md:flex md:w-1/2 bg-gradient-to-tr from-teal-400 to-cyan-400 items-center justify-center p-10">
           <svg width="270" height="270" fill="none" xmlns="http://www.w3.org/2000/svg">
             <rect x="55" y="40" width="160" height="200" rx="20" fill="#fff"/>
@@ -60,7 +55,6 @@ const Register = ({ onRegister }) => {
           </svg>
         </div>
 
-        {/* Formulário à direita */}
         <div className="w-full md:w-1/2 flex flex-col justify-center py-12 px-8 md:px-16">
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800">Create your</h2>

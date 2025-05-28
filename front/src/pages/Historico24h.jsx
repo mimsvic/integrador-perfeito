@@ -1,8 +1,4 @@
 import React, { useEffect, useState } from 'react';
-
-// ATENÇÃO: para fonte Poppins funcionar, adicione no index.html:
-// <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
 const Historico24h = () => {
   const [historico, setHistorico] = useState([]);
   const [loading, setLoading] = useState(true);
