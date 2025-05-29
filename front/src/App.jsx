@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Historico24h from "./pages/Historico24h";
 import Register from "./pages/Register";
 import PrivateRouter from "./components/PrivateRouter";
+import AmbientesPage from "./pages/Ambientes";
 
 export default function App() {
   const location = useLocation();
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/historico" element={<Historico24h />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/ambientes" element={<AmbientesPage/>} />
           </Routes>
         </div>
       </div>

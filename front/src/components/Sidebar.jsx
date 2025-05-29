@@ -5,7 +5,7 @@ import { Home, Refrigerator, Shapes, Fan, Lightbulb } from "lucide-react";
 const menuItems = [
   { icon: Home, path: "/" },
   { icon: Refrigerator, path: "/refrigerador" },
-  { icon: Shapes, path: "/shapes" },
+  { icon: Shapes, path: "/ambientes" },
   { icon: Fan, path: "/dashboardumidade" },
   { icon: Lightbulb, path: "/smartlight" },
 ];
