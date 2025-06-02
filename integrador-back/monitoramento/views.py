@@ -181,6 +181,9 @@ def cadastrar_usuario(request):
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'back.settings')
 django.setup()
 
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def importar_planilhas(request):
     planilhas = {
         'contador.xlsx':        ('Contador de Pessoas', 'Un'),
@@ -191,8 +194,6 @@ def importar_planilhas(request):
 
     BASE_PATH = os.path.dirname(os.path.dirname(__file__)) 
     inseridos = 0
-
-    # Importar sensores
     for nome_arquivo, (tipo_sensor, unidade) in planilhas.items():
         caminho = os.path.join(BASE_PATH, nome_arquivo)
         try:

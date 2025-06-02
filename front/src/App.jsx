@@ -41,9 +41,16 @@ export default function App() {
             <Route path="/smartlight" element={<SmartLight />} />
             <Route path="/dashboardumidade" element={<DashboardUmidade />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/historico" element={<Historico24h />} />
+            <Route
+              path="/historico"
+              element={
+                <PrivateRouter>
+                  <Historico24h />
+                </PrivateRouter>
+              }
+            />
             <Route path="/register" element={<Register />} />
-            <Route path="/ambientes" element={<AmbientesPage/>} />
+            <Route path="/ambientes" element={<AmbientesPage />} />
           </Routes>
         </div>
       </div>

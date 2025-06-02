@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Home, Refrigerator, Shapes, Fan, Lightbulb } from "lucide-react";
+import { Home, Refrigerator, Shapes, Fan, Lightbulb, History } from "lucide-react";
 
 const menuItems = [
   { icon: Home, path: "/" },
@@ -8,6 +8,7 @@ const menuItems = [
   { icon: Shapes, path: "/ambientes" },
   { icon: Fan, path: "/dashboardumidade" },
   { icon: Lightbulb, path: "/smartlight" },
+  { icon: History, path: "/historico" }, // Adicionado botão para Histórico 24h
 ];
 
 export default function Sidebar() {
