@@ -15,18 +15,15 @@ import {
 
 const API_URL = "http://127.0.0.1:8000/api/ambientes/";
 
-
-
 function onlyLetters(str) {
-  str = String(str || ''); 
-  return /^[A-Za-zÀ-ÿ\s]+$/.test(str.trim());
+  str = String(str || '');
+  return /^[A-Za-zÀ-ÿ0-9\s]+$/.test(str.trim());
 }
 
 function onlyNumber(str) {
   str = String(str || '');
   return /^-?\d+$/.test(str.trim());
 }
-
 
 export default function AmbientesCrud() {
   const [ambientes, setAmbientes] = useState([]);
@@ -41,7 +38,6 @@ export default function AmbientesCrud() {
   const [errors, setErrors] = useState({});
   const [search, setSearch] = useState("");
 
-  // Função para garantir que ambientes será sempre array
   const setAmbientesSafe = (data) => {
     if (Array.isArray(data)) setAmbientes(data);
     else if (data && Array.isArray(data.results)) setAmbientes(data.results);
@@ -52,7 +48,6 @@ export default function AmbientesCrud() {
     setLoading(true);
     const token = localStorage.getItem("accessToken");
     let url = API_URL;
-    // Corrigido: use o endpoint correto de busca
     if (q) url += `search/?search=${encodeURIComponent(q)}`;
     const res = await fetch(url, {
       headers: { Authorization: `Bearer ${token}` },
@@ -69,7 +64,6 @@ export default function AmbientesCrud() {
 
   useEffect(() => {
     fetchAmbientes();
-    // eslint-disable-next-line
   }, []);
 
   const validate = () => {
@@ -80,8 +74,8 @@ export default function AmbientesCrud() {
     if (!form.descricao || !onlyLetters(form.descricao)) {
       err.descricao = "Só letras e espaços.";
     }
-    if (form.ni && !onlyLetters(form.ni)) {
-      err.ni = "Só letras e espaços.";
+    if (form.ni && !onlyNumber(form.ni)) {
+      err.ni = "Só números inteiros.";
     }
     if (form.responsavel && !onlyLetters(form.responsavel)) {
       err.responsavel = "Só letras e espaços.";
@@ -98,10 +92,10 @@ export default function AmbientesCrud() {
     const method = editingId ? "PUT" : "POST";
     const url = editingId ? `${API_URL}${editingId}/` : API_URL;
 
-    // Certifique-se que sig é inteiro
     const payload = {
       ...form,
       sig: Number(form.sig),
+      ni: form.ni === "" ? "" : Number(form.ni),
     };
 
     const resp = await fetch(url, {
@@ -142,7 +136,7 @@ export default function AmbientesCrud() {
     setForm({
       sig: amb.sig.toString(),
       descricao: amb.descricao,
-      ni: amb.ni,
+      ni: amb.ni?.toString() ?? "",
       responsavel: amb.responsavel,
     });
     setEditingId(amb.id);
@@ -159,7 +153,7 @@ export default function AmbientesCrud() {
   };
 
   return (
-    <section className="relative overflow-hidden py-5 w-full font-[Poppins] bg-white min-h-screen">
+    <section className="relative overflow-hidden py-5 w-full font-[Poppins] bg-white min-h-screen pb-16">
       <div className="absolute inset-0 -z-10 opacity-[0.03]">
         <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -171,7 +165,7 @@ export default function AmbientesCrud() {
         </svg>
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-full sm:max-w-2xl md:max-w-5xl px-2 sm:px-4 md:px-6">
+      <div className="relative z-10 mx-auto w-full max-w-full sm:max-w-2xl md:max-w-5xl px-2 sm:px-4 md:px-6 min-h-0">
         {/* Título */}
         <div className="mx-auto mb-4 sm:mb-6 max-w-2xl text-center">
           <div className="mb-2 flex justify-center">
@@ -194,7 +188,7 @@ export default function AmbientesCrud() {
             onSubmit={handleSubmit}
             className="flex flex-col gap-3"
           >
-            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
               <div className="flex flex-col">
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
                   SIG (Número)
@@ -230,11 +224,12 @@ export default function AmbientesCrud() {
               </div>
               <div className="flex flex-col">
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  NI
+                  NI (Número Inteiro)
                 </label>
                 <input
+                  type="number"
                   className={`border ${errors.ni ? "border-red-400" : "border-cyan-200"} rounded-lg p-2 w-full outline-cyan-400 text-sm`}
-                  placeholder="Ex: Bloco A"
+                  placeholder="Ex: 5"
                   value={form.ni}
                   onChange={(e) => setForm({ ...form, ni: e.target.value })}
                 />
@@ -295,7 +290,6 @@ export default function AmbientesCrud() {
               >
                 <RefreshCcw className="w-5 h-5" />
               </button>
-              {/* Corrigido: Não é mais um <form> dentro do form */}
               <div className="flex items-center gap-1 ml-auto">
                 <input
                   className="border border-cyan-200 rounded-lg px-2 py-1 outline-cyan-400 text-sm"
@@ -324,60 +318,62 @@ export default function AmbientesCrud() {
           </form>
         </div>
 
-        {/* Tabela desktop/tablet */}
-        <div className="rounded-xl bg-white/80 shadow-lg overflow-x-auto hidden sm:block">
-          {loading ? (
-            <p className="text-center py-8 text-cyan-600 font-semibold">Carregando ambientes...</p>
-          ) : (
-            <table className="min-w-[640px] w-full divide-y divide-cyan-100 text-xs sm:text-sm">
-              <thead className="bg-gradient-to-r from-cyan-100 via-white to-emerald-50">
-                <tr>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">SIG</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">Descrição</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">NI</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">Responsável</th>
-                  <th className="px-2 py-2 text-center font-semibold text-cyan-700">Ações</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-cyan-50">
-                {ambientes.length === 0 && (
+        {/* Tabela desktop/tablet - CONTAINER AJUSTADO */}
+        <div className="rounded-xl bg-white/80 shadow-lg overflow-x-auto max-h-[75vh] min-h-0 mb-16">
+          <div className="overflow-y-auto max-h-[75vh]" style={{height: "calc(-250px + 80vh)"}}>
+            {loading ? (
+              <p className="text-center py-8 text-cyan-600 font-semibold">Carregando ambientes...</p>
+            ) : (
+              <table className="min-w-[640px] w-full divide-y divide-cyan-100 text-xs sm:text-sm">
+                <thead className="bg-gradient-to-r from-cyan-100 via-white to-emerald-50 sticky top-0 z-10">
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-gray-400 font-medium">
-                      Nenhum ambiente cadastrado.
-                    </td>
+                    <th className="px-2 py-2 text-left font-semibold text-cyan-700">SIG</th>
+                    <th className="px-2 py-2 text-left font-semibold text-cyan-700">Descrição</th>
+                    <th className="px-2 py-2 text-left font-semibold text-cyan-700">NI</th>
+                    <th className="px-2 py-2 text-left font-semibold text-cyan-700">Responsável</th>
+                    <th className="px-2 py-2 text-center font-semibold text-cyan-700">Ações</th>
                   </tr>
-                )}
-                {ambientes.map((a) => (
-                  <tr key={a.id} className="hover:bg-cyan-50 transition">
-                    <td className="px-2 py-2 whitespace-nowrap">{a.sig}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">{a.descricao}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">{a.ni}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">{a.responsavel}</td>
-                    <td className="px-2 py-2 whitespace-nowrap text-center">
-                      <button
-                        className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 hover:bg-yellow-200 rounded-lg px-2 sm:px-3 py-1 text-xs font-semibold mr-2 transition"
-                        onClick={() => handleEdit(a)}
-                        title="Editar"
-                      >
-                        <Edit2 className="w-4 h-4" /> Editar
-                      </button>
-                      <button
-                        className="inline-flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg px-2 sm:px-3 py-1 text-xs font-semibold transition"
-                        onClick={() => handleDelete(a.id)}
-                        title="Excluir"
-                      >
-                        <Trash2 className="w-4 h-4" /> Excluir
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                <tbody className="divide-y divide-cyan-50">
+                  {ambientes.length === 0 && (
+                    <tr>
+                      <td colSpan={5} className="py-8 text-center text-gray-400 font-medium">
+                        Nenhum ambiente cadastrado.
+                      </td>
+                    </tr>
+                  )}
+                  {ambientes.map((a) => (
+                    <tr key={a.id} className="hover:bg-cyan-50 transition">
+                      <td className="px-2 py-2 whitespace-nowrap align-top">{a.sig}</td>
+                      <td className="px-2 py-2 whitespace-normal break-words max-w-[200px] align-top">{a.descricao}</td>
+                      <td className="px-2 py-2 whitespace-normal break-words max-w-[120px] align-top">{a.ni}</td>
+                      <td className="px-2 py-2 whitespace-normal break-words max-w-[160px] align-top">{a.responsavel}</td>
+                      <td className="px-2 py-2 whitespace-nowrap text-center align-top">
+                        <button
+                          className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 hover:bg-yellow-200 rounded-lg px-2 sm:px-3 py-1 text-xs font-semibold mr-2 transition"
+                          onClick={() => handleEdit(a)}
+                          title="Editar"
+                        >
+                          <Edit2 className="w-4 h-4" /> Editar
+                        </button>
+                        <button
+                          className="inline-flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg px-2 sm:px-3 py-1 text-xs font-semibold transition"
+                          onClick={() => handleDelete(a.id)}
+                          title="Excluir"
+                        >
+                          <Trash2 className="w-4 h-4" /> Excluir
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </div>
 
         {/* Mobile cards */}
-        <div className="sm:hidden mt-4 space-y-4">
+        <div className="sm:hidden mt-4 space-y-4 mb-16">
           {loading ? (
             <p className="text-center py-8 text-cyan-600 font-semibold">Carregando ambientes...</p>
           ) : (

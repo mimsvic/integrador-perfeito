@@ -211,63 +211,63 @@ const Historico24h = () => {
         {formMsg && <div className="text-center mb-4 text-sm text-teal-600">{formMsg}</div>}
 
         {loading ? (
-    <div className="text-center text-gray-500 text-lg py-12">
-      Carregando...
-    </div>
-  ) : erro ? (
-    <div className="text-center text-red-500 text-lg py-8">{erro}</div>
-  ) : historico.length === 0 ? (
-    <div className="text-center text-gray-400 text-lg py-8">
-      Nenhum dado encontrado nas últimas 24 horas.
-    </div>
-  ) : (
-    <div className="overflow-x-auto flex-grow">
-      <div
-        className="overflow-y-auto rounded-xl border"
-        style={{ height: 'calc(80vh - 250px)' }} // 250px é aproximado para cabeçalho, formulário, botões etc.
-      >
-        <table className="min-w-full bg-white">
-          <thead className="sticky top-0 bg-white z-10">
-            <tr>
-              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                Sensor
-              </th>
-              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                Ambiente
-              </th>
-              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                Valor
-              </th>
-              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                Data/Hora
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {historico.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50 transition">
-                <td className="px-3 py-2 border-b text-gray-800">
-                  {getSensorLabel(item.sensor)}
-                </td>
-                <td className="px-3 py-2 border-b text-gray-800">
-                  {getAmbienteLabel(item.ambiente)}
-                </td>
-                <td className="px-3 py-2 border-b text-gray-800">
-                  {item.valor}
-                </td>
-                <td className="px-3 py-2 border-b text-gray-600 text-sm">
-                  {item.timestamp
-                    ? new Date(item.timestamp).toLocaleString('pt-BR')
-                    : '-'}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          <div className="text-center text-gray-500 text-lg py-12">
+            Carregando...
+          </div>
+        ) : erro ? (
+          <div className="text-center text-red-500 text-lg py-8">{erro}</div>
+        ) : historico.length === 0 ? (
+          <div className="text-center text-gray-400 text-lg py-8">
+            Nenhum dado encontrado nas últimas 24 horas.
+          </div>
+        ) : (
+          <div className="overflow-x-auto flex-grow">
+            <div
+              className="overflow-y-auto rounded-xl border"
+              style={{ height: 'calc(80vh - 250px)' }} // 250px é aproximado para cabeçalho, formulário, botões etc.
+            >
+              <table className="min-w-full bg-white">
+                <thead className="sticky top-0 bg-white z-10">
+                  <tr>
+                    <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                      Sensor
+                    </th>
+                    <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                      Ambiente
+                    </th>
+                    <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                      Valor
+                    </th>
+                    <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                      Data/Hora
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {historico.map((item) => (
+                    <tr key={item.id} className="hover:bg-gray-50 transition">
+                      <td className="px-3 py-2 border-b text-gray-800">
+                        {getSensorLabel(item.sensor)}
+                      </td>
+                      <td className="px-3 py-2 border-b text-gray-800">
+                        {getAmbienteLabel(item.ambiente)}
+                      </td>
+                      <td className="px-3 py-2 border-b text-gray-800">
+                        {item.valor}
+                      </td>
+                      <td className="px-3 py-2 border-b text-gray-600 text-sm">
+                        {item.timestamp
+                          ? new Date(item.timestamp).toLocaleString('pt-BR')
+                          : '-'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </div>
-    </div>
-  )}
-</div>
     </div>
   );
 };
