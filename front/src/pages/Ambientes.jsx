@@ -15,14 +15,18 @@ import {
 
 const API_URL = "http://127.0.0.1:8000/api/ambientes/";
 
-// Validação para letras e espaços
+
+
 function onlyLetters(str) {
+  str = String(str || ''); 
   return /^[A-Za-zÀ-ÿ\s]+$/.test(str.trim());
 }
-// Validação para números inteiros (aceita negativos)
+
 function onlyNumber(str) {
+  str = String(str || '');
   return /^-?\d+$/.test(str.trim());
 }
+
 
 export default function AmbientesCrud() {
   const [ambientes, setAmbientes] = useState([]);

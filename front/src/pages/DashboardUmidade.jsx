@@ -15,12 +15,17 @@ import {
 const API_URL = "http://127.0.0.1:8000/api/sensores/";
 
 function onlyLetters(str) {
+  str = String(str || '');
   return /^[A-Za-zÀ-ÿ\s]+$/.test(str.trim());
 }
+
 function onlyMac(str) {
+  str = String(str || '');
   return /^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/.test(str.trim());
 }
+
 function onlyNumber(str) {
+  str = String(str || '');
   return /^-?\d+(\.\d+)?$/.test(str.trim());
 }
 
@@ -128,7 +133,7 @@ export default function SensoresCrud() {
   };
 
   return (
-    <section className="relative overflow-hidden py-5 w-full font-[Poppins] bg-white min-h-screen">
+    <section className="relative overflow-hidden py-5 w-full font-[Poppins] bg-white min-h-screen flex flex-col">
       <div className="absolute inset-0 -z-10 opacity-[0.03]">
         <svg className="h-full w-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -140,7 +145,7 @@ export default function SensoresCrud() {
         </svg>
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-full sm:max-w-2xl md:max-w-5xl px-2 sm:px-4 md:px-6">
+      <div className="relative z-10 mx-auto w-full max-w-full sm:max-w-2xl md:max-w-5xl px-2 sm:px-4 md:px-6 flex flex-col flex-grow">
         {/* Título */}
         <div className="mx-auto mb-4 sm:mb-6 max-w-2xl text-center">
           <div className="mb-2 flex justify-center">
@@ -159,11 +164,10 @@ export default function SensoresCrud() {
 
         {/* Formulário */}
         <div className="bg-gradient-to-tr from-emerald-50 to-cyan-50 rounded-xl shadow-lg p-2 sm:p-6 mb-4 sm:mb-8">
-          <form
-            onSubmit={handleSubmit}
-            className="flex flex-col gap-3"
-          >
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
             <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-3">
+              {/* Campos do formulário - igual ao original */}
+              {/* ... seu código original dos inputs ... */}
               <div className="flex flex-col">
                 <label className="block text-xs font-semibold text-gray-700 mb-1">
                   Tipo do Sensor
@@ -240,122 +244,122 @@ export default function SensoresCrud() {
                 </div>
                 {errors.longitude && <span className="text-xs text-red-500">{errors.longitude}</span>}
               </div>
-              <div className="flex flex-col">
-                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                  Status
-                </label>
-                <select
-                  className="border border-cyan-200 rounded-lg p-2 w-full outline-cyan-400 text-sm"
-                  value={form.status}
-                  onChange={(e) => setForm({ ...form, status: e.target.value === "true" })}
-                >
-                  <option value="true">Ativo</option>
-                  <option value="false">Inativo</option>
-                </select>
-              </div>
             </div>
-            <div className="flex flex-row gap-2 flex-wrap mt-2">
-              <button
-                className={`inline-flex items-center gap-2 rounded-lg px-4 py-2 font-semibold text-white transition text-sm ${
-                  editingId
-                    ? "bg-emerald-500 hover:bg-emerald-600"
-                    : "bg-cyan-500 hover:bg-cyan-600"
-                } shadow`}
-                type="submit"
-              >
-                {editingId ? <Save className="w-4 h-4" /> : <PlusCircle className="w-4 h-4" />}
-                {editingId ? "Salvar" : "Adicionar"}
-              </button>
-              {editingId && (
+
+            <div className="flex items-center justify-between">
+              <label className="flex items-center gap-2 cursor-pointer text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={form.status}
+                  onChange={(e) => setForm({ ...form, status: e.target.checked })}
+                  className="rounded border-cyan-300 text-cyan-400 focus:ring-cyan-300"
+                />
+                Ativo
+              </label>
+
+              <div className="flex gap-2">
+                {editingId && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForm({
+                        sensor: "",
+                        mac_address: "",
+                        unidade_med: "",
+                        latitude: "",
+                        longitude: "",
+                        status: true,
+                      });
+                      setEditingId(null);
+                      setErrors({});
+                    }}
+                    className="inline-flex items-center gap-1 rounded-md border border-red-300 bg-red-50 px-3 py-1 text-xs font-semibold text-red-700 hover:bg-red-100"
+                  >
+                    <XCircle className="h-4 w-4" />
+                    Cancelar
+                  </button>
+                )}
+
                 <button
-                  type="button"
-                  className="inline-flex items-center gap-2 rounded-lg px-3 py-2 font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 transition shadow text-sm"
-                  onClick={() => {
-                    setEditingId(null);
-                    setForm({
-                      sensor: "",
-                      mac_address: "",
-                      unidade_med: "",
-                      latitude: "",
-                      longitude: "",
-                      status: true,
-                    });
-                    setErrors({});
-                  }}
+                  type="submit"
+                  className="inline-flex items-center gap-1 rounded-md border border-cyan-300 bg-cyan-50 px-3 py-1 text-xs font-semibold text-cyan-700 hover:bg-cyan-100"
                 >
-                  <XCircle className="w-4 h-4" />
-                  Cancelar
+                  <Save className="h-4 w-4" />
+                  {editingId ? "Salvar" : "Adicionar"}
                 </button>
-              )}
-              <button
-                type="button"
-                title="Atualizar lista"
-                className="p-2 rounded-lg bg-gray-100 hover:bg-cyan-200 text-cyan-700 transition shadow"
-                onClick={fetchSensores}
-              >
-                <RefreshCcw className="w-5 h-5" />
-              </button>
+              </div>
             </div>
           </form>
         </div>
-
-        {/* Tabela - só desktop/tablet */}
-        <div className="rounded-xl bg-white/80 shadow-lg overflow-x-auto hidden sm:block">
+        <div
+          className="rounded-xl bg-white/80 shadow-lg overflow-x-auto overflow-y-auto hidden sm:block flex-grow"
+          style={{ maxHeight: "60vh", minHeight: "300px" }}
+        >
           {loading ? (
             <p className="text-center py-8 text-cyan-600 font-semibold">Carregando sensores...</p>
           ) : (
             <table className="min-w-[640px] w-full divide-y divide-cyan-100 text-xs sm:text-sm">
-              <thead className="bg-gradient-to-r from-cyan-100 via-white to-emerald-50">
+              <thead className="bg-gradient-to-r from-cyan-100 via-white to-emerald-50 sticky top-0 z-20">
                 <tr>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">Tipo</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">MAC</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">Unidade</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">Latitude</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">Longitude</th>
-                  <th className="px-2 py-2 text-left font-semibold text-cyan-700">Status</th>
-                  <th className="px-2 py-2 text-center font-semibold text-cyan-700">Ações</th>
+                  <th className="whitespace-nowrap px-3 py-2 text-left font-semibold text-cyan-700">
+                    <span className="inline-flex items-center gap-1">
+                      Tipo
+                      <Activity className="w-3 h-3 text-cyan-400" />
+                    </span>
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-2 text-left font-semibold text-cyan-700">
+                    MAC Address
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-2 text-left font-semibold text-cyan-700">
+                    Unidade
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-2 text-left font-semibold text-cyan-700">
+                    Latitude
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-2 text-left font-semibold text-cyan-700">
+                    Longitude
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-2 text-center font-semibold text-cyan-700">
+                    Status
+                  </th>
+                  <th className="whitespace-nowrap px-3 py-2 text-center font-semibold text-cyan-700">
+                    Ações
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-cyan-50">
-                {sensores.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="py-8 text-center text-gray-400 font-medium">
-                      Nenhum sensor cadastrado.
+                {sensores.map((sensor) => (
+                  <tr key={sensor.id} className="hover:bg-cyan-50">
+                    <td className="whitespace-nowrap px-3 py-2">{sensor.sensor}</td>
+                    <td className="whitespace-nowrap px-3 py-2">{sensor.mac_address}</td>
+                    <td className="whitespace-nowrap px-3 py-2">{sensor.unidade_med}</td>
+                    <td className="whitespace-nowrap px-3 py-2">{sensor.latitude}</td>
+                    <td className="whitespace-nowrap px-3 py-2">{sensor.longitude}</td>
+                    <td className="whitespace-nowrap px-3 py-2 text-center">
+                      {sensor.status ? (
+                        <span className="inline-block rounded-full bg-green-200 px-2 py-0.5 text-xs font-semibold text-green-700">
+                          Ativo
+                        </span>
+                      ) : (
+                        <span className="inline-block rounded-full bg-red-200 px-2 py-0.5 text-xs font-semibold text-red-700">
+                          Inativo
+                        </span>
+                      )}
                     </td>
-                  </tr>
-                )}
-                {sensores.map((s) => (
-                  <tr key={s.id} className="hover:bg-cyan-50 transition">
-                    <td className="px-2 py-2 whitespace-nowrap">{s.sensor}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">{s.mac_address}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">{s.unidade_med}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">{s.latitude}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">{s.longitude}</td>
-                    <td className="px-2 py-2 whitespace-nowrap">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-full font-bold ${
-                          s.status
-                            ? "bg-emerald-100 text-emerald-700"
-                            : "bg-gray-200 text-gray-500"
-                        }`}
-                      >
-                        {s.status ? "Ativo" : "Inativo"}
-                      </span>
-                    </td>
-                    <td className="px-2 py-2 whitespace-nowrap text-center">
+                    <td className="whitespace-nowrap px-3 py-2 text-center">
                       <button
-                        className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 hover:bg-yellow-200 rounded-lg px-2 sm:px-3 py-1 text-xs font-semibold mr-2 transition"
-                        onClick={() => handleEdit(s)}
+                        onClick={() => handleEdit(sensor)}
                         title="Editar"
+                        className="text-cyan-600 hover:text-cyan-900 mr-2"
                       >
-                        <Edit2 className="w-4 h-4" /> Editar
+                        <Edit2 className="inline-block w-4 h-4" />
                       </button>
                       <button
-                        className="inline-flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg px-2 sm:px-3 py-1 text-xs font-semibold transition"
-                        onClick={() => handleDelete(s.id)}
+                        onClick={() => handleDelete(sensor.id)}
                         title="Excluir"
+                        className="text-red-600 hover:text-red-900"
                       >
-                        <Trash2 className="w-4 h-4" /> Excluir
+                        <Trash2 className="inline-block w-4 h-4" />
                       </button>
                     </td>
                   </tr>
@@ -366,54 +370,59 @@ export default function SensoresCrud() {
         </div>
 
         {/* Mobile cards */}
-        <div className="sm:hidden mt-4 space-y-4">
-          {loading ? (
-            <p className="text-center py-8 text-cyan-600 font-semibold">Carregando sensores...</p>
-          ) : (
-            sensores.length === 0 ? (
-              <div className="py-8 text-center text-gray-400 font-medium">
-                Nenhum sensor cadastrado.
+        <div className="space-y-4 sm:hidden">
+          {sensores.map((sensor) => (
+            <article
+              key={sensor.id}
+              className="rounded-xl bg-white/80 shadow-lg px-4 py-3"
+              aria-label="Sensor"
+            >
+              <div className="flex items-center gap-3">
+                <Activity className="text-cyan-400 w-5 h-5" />
+                <h3 className="text-cyan-600 font-semibold">{sensor.sensor}</h3>
               </div>
-            ) : (
-              sensores.map((s) => (
-                <div key={s.id} className="rounded-xl border border-cyan-100 bg-white p-4 shadow flex flex-col gap-2">
-                  <div className="flex items-center justify-between mb-1">
-                    <span className="font-bold text-cyan-700">{s.sensor}</span>
-                    <span
-                      className={`inline-block px-2 py-0.5 rounded-full font-bold text-xs ${
-                        s.status
-                          ? "bg-emerald-100 text-emerald-700"
-                          : "bg-gray-200 text-gray-500"
-                      }`}
-                    >
-                      {s.status ? "Ativo" : "Inativo"}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-2 text-xs text-gray-700">
-                    <span className="flex items-center gap-1"><Wifi className="w-3 h-3" /> {s.mac_address}</span>
-                    <span className="flex items-center gap-1"><Activity className="w-3 h-3" /> {s.unidade_med}</span>
-                    <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {s.latitude}, {s.longitude}</span>
-                  </div>
-                  <div className="flex gap-2 mt-2">
-                    <button
-                      className="inline-flex items-center gap-1 bg-yellow-100 text-yellow-700 hover:bg-yellow-200 rounded-lg px-3 py-1 text-xs font-semibold transition"
-                      onClick={() => handleEdit(s)}
-                      title="Editar"
-                    >
-                      <Edit2 className="w-4 h-4" /> Editar
-                    </button>
-                    <button
-                      className="inline-flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 rounded-lg px-3 py-1 text-xs font-semibold transition"
-                      onClick={() => handleDelete(s.id)}
-                      title="Excluir"
-                    >
-                      <Trash2 className="w-4 h-4" /> Excluir
-                    </button>
-                  </div>
-                </div>
-              ))
-            )
-          )}
+              <p className="text-xs font-semibold text-gray-500">{sensor.mac_address}</p>
+              <div className="grid grid-cols-2 gap-3 mt-2">
+                <p className="text-xs font-semibold">
+                  Unidade: <span className="font-normal">{sensor.unidade_med}</span>
+                </p>
+                <p className="text-xs font-semibold">
+                  Latitude: <span className="font-normal">{sensor.latitude}</span>
+                </p>
+                <p className="text-xs font-semibold">
+                  Longitude: <span className="font-normal">{sensor.longitude}</span>
+                </p>
+                <p className="text-xs font-semibold">
+                  Status:{" "}
+                  <span
+                    className={`inline-block rounded-full px-2 py-0.5 text-xs font-semibold ${
+                      sensor.status
+                        ? "bg-green-200 text-green-700"
+                        : "bg-red-200 text-red-700"
+                    }`}
+                  >
+                    {sensor.status ? "Ativo" : "Inativo"}
+                  </span>
+                </p>
+              </div>
+              <div className="mt-3 flex justify-end gap-2">
+                <button
+                  onClick={() => handleEdit(sensor)}
+                  title="Editar"
+                  className="text-cyan-600 hover:text-cyan-900"
+                >
+                  <Edit2 className="inline-block w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => handleDelete(sensor.id)}
+                  title="Excluir"
+                  className="text-red-600 hover:text-red-900"
+                >
+                  <Trash2 className="inline-block w-4 h-4" />
+                </button>
+              </div>
+            </article>
+          ))}
         </div>
       </div>
     </section>

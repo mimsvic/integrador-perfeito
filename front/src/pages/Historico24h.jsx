@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Import } from "lucide-react";
 
-// Helpers para exibir labels
 const getSensorLabel = (sensor) =>
   typeof sensor === 'object'
     ? sensor.sensor || sensor.mac_address || sensor.id
@@ -11,8 +10,22 @@ const getAmbienteLabel = (ambiente) =>
     ? ambiente.descricao || ambiente.id
     : ambiente;
 
-// Ajuste aqui para o endpoint correto!
 const API_BASE = "http://127.0.0.1:8000/";
+
+const getToken = () => localStorage.getItem('accessToken') || localStorage.getItem('token');
+
+const fetchOptions = (method = 'GET', body = null, contentType = true) => {
+  const token = getToken();
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    ...(contentType && { 'Content-Type': 'application/json' }),
+  };
+  return {
+    method,
+    headers,
+    ...(body && { body: JSON.stringify(body) }),
+  };
+};
 
 const Historico24h = () => {
   const [historico, setHistorico] = useState([]);
@@ -20,7 +33,6 @@ const Historico24h = () => {
   const [erro, setErro] = useState('');
   const [refresh, setRefresh] = useState(0);
 
-  // Estados do formulário
   const [sensores, setSensores] = useState([]);
   const [ambientes, setAmbientes] = useState([]);
   const [sensorId, setSensorId] = useState('');
@@ -29,27 +41,29 @@ const Historico24h = () => {
   const [formMsg, setFormMsg] = useState('');
   const [importMsg, setImportMsg] = useState('');
 
-  // Buscar sensores e ambientes
   useEffect(() => {
-    const token = localStorage.getItem('accessToken') || localStorage.getItem('token');
+    const token = getToken();
     if (!token) return;
-    fetch(API_BASE + 'api/sensores/', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(setSensores);
-    fetch(API_BASE + 'api/ambientes/', {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then(res => res.json())
-      .then(setAmbientes);
+
+    Promise.all([
+      fetch(API_BASE + 'api/sensores/', { headers: { Authorization: `Bearer ${token}` } }),
+      fetch(API_BASE + 'api/ambientes/', { headers: { Authorization: `Bearer ${token}` } }),
+    ])
+      .then(async ([resSensores, resAmbientes]) => {
+        const sensoresData = await resSensores.json();
+        const ambientesData = await resAmbientes.json();
+        setSensores(sensoresData);
+        setAmbientes(ambientesData);
+      })
+      .catch(() => {
+        setSensores([]);
+        setAmbientes([]);
+      });
   }, []);
 
-  // Buscar histórico das últimas 24h
   useEffect(() => {
     const fetchHistorico = async () => {
-      const token =
-        localStorage.getItem('accessToken') || localStorage.getItem('token');
+      const token = getToken();
       if (!token) {
         setErro('Você precisa fazer login!');
         setLoading(false);
@@ -58,18 +72,11 @@ const Historico24h = () => {
       try {
         const response = await fetch(
           API_BASE + 'api/historico/ultimas-24h/',
-          {
-            method: 'GET',
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
+          fetchOptions()
         );
         const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.detail || 'Erro ao buscar histórico');
-        }
+        if (!response.ok) throw new Error(data.detail || 'Erro ao buscar histórico');
+
         if (Array.isArray(data)) {
           setHistorico(data);
           setErro('');
@@ -90,7 +97,6 @@ const Historico24h = () => {
     fetchHistorico();
   }, [refresh]);
 
-  // Enviar formulário para cadastrar novo histórico
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormMsg('');
@@ -98,21 +104,11 @@ const Historico24h = () => {
       setFormMsg('Preencha todos os campos!');
       return;
     }
-    const token =
-      localStorage.getItem('accessToken') || localStorage.getItem('token');
     try {
-      const res = await fetch(API_BASE + 'api/historico/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          sensor_id: sensorId,
-          ambiente_id: ambienteId,
-          valor: Number(valor),
-        }),
-      });
+      const res = await fetch(
+        API_BASE + 'api/historico/',
+        fetchOptions('POST', { sensor_id: sensorId, ambiente_id: ambienteId, valor: Number(valor) })
+      );
       if (!res.ok) {
         const err = await res.json();
         setFormMsg(err.detail || 'Erro ao cadastrar histórico');
@@ -122,33 +118,28 @@ const Historico24h = () => {
       setSensorId('');
       setAmbienteId('');
       setValor('');
-      setRefresh(v => v + 1); // Atualiza lista
-    } catch (err) {
+      setRefresh(v => v + 1);
+    } catch {
       setFormMsg('Erro ao cadastrar histórico');
     }
   };
 
-  // Função para importar as planilhas
   const handleImportPlanilhas = async () => {
     setImportMsg("Importando...");
-    const token =
-      localStorage.getItem('accessToken') || localStorage.getItem('token');
+    const token = getToken();
     try {
-      // Aqui está o endpoint correto!
       const res = await fetch(API_BASE + 'api/importar/', {
         method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
       if (!res.ok) {
         setImportMsg(data.erro || "Erro ao importar planilhas.");
       } else {
         setImportMsg(data.sucesso || "Importação concluída!");
-        setRefresh(v => v + 1); // Atualiza lista
+        setRefresh(v => v + 1);
       }
-    } catch (err) {
+    } catch {
       setImportMsg("Erro ao importar planilhas.");
     }
     setTimeout(() => setImportMsg(""), 6000);
@@ -156,7 +147,7 @@ const Historico24h = () => {
 
   return (
     <div
-      className="min-h-[60vh] w-full flex flex-col items-center justify-start bg-gray-100 py-12 px-4"
+      className="min-h-[60vh] w-full flex flex-col items-center justify-start bg-white py-12 px-4"
       style={{ fontFamily: "'Poppins', sans-serif" }}
     >
       <div className="w-full max-w-3xl bg-white rounded-2xl shadow-lg p-8">
@@ -178,7 +169,6 @@ const Historico24h = () => {
           <div className="text-center mb-4 text-sm text-emerald-600">{importMsg}</div>
         )}
 
-        {/* Formulário para cadastrar histórico */}
         <form onSubmit={handleSubmit} className="mb-8 flex flex-wrap gap-3 items-end justify-center">
           <select
             className="border rounded px-3 py-2"
@@ -220,60 +210,64 @@ const Historico24h = () => {
         </form>
         {formMsg && <div className="text-center mb-4 text-sm text-teal-600">{formMsg}</div>}
 
-        {/* Lista dos históricos das últimas 24h */}
         {loading ? (
-          <div className="text-center text-gray-500 text-lg py-12">
-            Carregando...
-          </div>
-        ) : erro ? (
-          <div className="text-center text-red-500 text-lg py-8">{erro}</div>
-        ) : historico.length === 0 ? (
-          <div className="text-center text-gray-400 text-lg py-8">
-            Nenhum dado encontrado nas últimas 24 horas.
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-xl">
-              <thead>
-                <tr>
-                  <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                    Sensor
-                  </th>
-                  <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                    Ambiente
-                  </th>
-                  <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                    Valor
-                  </th>
-                  <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
-                    Data/Hora
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {historico.map((item) => (
-                  <tr key={item.id} className="hover:bg-gray-50 transition">
-                    <td className="px-3 py-2 border-b text-gray-800">
-                      {getSensorLabel(item.sensor)}
-                    </td>
-                    <td className="px-3 py-2 border-b text-gray-800">
-                      {getAmbienteLabel(item.ambiente)}
-                    </td>
-                    <td className="px-3 py-2 border-b text-gray-800">
-                      {item.valor}
-                    </td>
-                    <td className="px-3 py-2 border-b text-gray-600 text-sm">
-                      {item.timestamp
-                        ? new Date(item.timestamp).toLocaleString('pt-BR')
-                        : '-'}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+    <div className="text-center text-gray-500 text-lg py-12">
+      Carregando...
+    </div>
+  ) : erro ? (
+    <div className="text-center text-red-500 text-lg py-8">{erro}</div>
+  ) : historico.length === 0 ? (
+    <div className="text-center text-gray-400 text-lg py-8">
+      Nenhum dado encontrado nas últimas 24 horas.
+    </div>
+  ) : (
+    <div className="overflow-x-auto flex-grow">
+      <div
+        className="overflow-y-auto rounded-xl border"
+        style={{ height: 'calc(80vh - 250px)' }} // 250px é aproximado para cabeçalho, formulário, botões etc.
+      >
+        <table className="min-w-full bg-white">
+          <thead className="sticky top-0 bg-white z-10">
+            <tr>
+              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                Sensor
+              </th>
+              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                Ambiente
+              </th>
+              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                Valor
+              </th>
+              <th className="px-3 py-2 border-b text-gray-700 text-left font-semibold">
+                Data/Hora
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {historico.map((item) => (
+              <tr key={item.id} className="hover:bg-gray-50 transition">
+                <td className="px-3 py-2 border-b text-gray-800">
+                  {getSensorLabel(item.sensor)}
+                </td>
+                <td className="px-3 py-2 border-b text-gray-800">
+                  {getAmbienteLabel(item.ambiente)}
+                </td>
+                <td className="px-3 py-2 border-b text-gray-800">
+                  {item.valor}
+                </td>
+                <td className="px-3 py-2 border-b text-gray-600 text-sm">
+                  {item.timestamp
+                    ? new Date(item.timestamp).toLocaleString('pt-BR')
+                    : '-'}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
+    </div>
+  )}
+</div>
     </div>
   );
 };
